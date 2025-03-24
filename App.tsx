@@ -1,118 +1,100 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+import 'react-native-reanimated';
+import 'react-native-get-random-values';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {Provider} from 'react-redux';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import WalletScreen from './src/screens/WalletScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import LoginScreen from './src/screens/LoginScreen';
+import SignupScreen from './src/screens/SignupScreen';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+import {UserProvider, useUser} from './src/context/UserContext';
+import store from './src/redux/slices/store';
+import ProfileScreen from './src/screens/ProfileScreen';
+import QuickRide from './src/screens/QuickRide';
+import ServiceCenterList from './src/screens/ServiceCenterList';
+import RidesHistory from './src/screens/RidesHistory';
+import RiderServiceSignup from './src/screens/RiderServiceSignup';
+import ServiceCenterSignup from './src/screens/ServiceCenterSignup';
+import AllRides from './src/screens/AllRides';
+import {SafeAreaView, StatusBar} from 'react-native';
+import SafeViewAndroid from './src/utils/SafeViewAndroid';
+import OtpEnters from './src/screens/OtpEnters';
+
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+// Main Tabs (Bottom Navigation)
+const MainTabs = () => (
+  <Tab.Navigator
+    screenOptions={({route}) => ({
+      tabBarIcon: ({color, size}) => {
+        let iconName;
+        if (route.name === 'Service') iconName = 'miscellaneous-services';
+        else if (route.name === 'Quick Ride') iconName = 'directions-car';
+        else if (route.name === 'Wallet') iconName = 'account-balance-wallet';
+        else if (route.name === 'Profile') iconName = 'person';
+        return <MaterialIcons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: '#B82929',
+      tabBarInactiveTintColor: 'gray',
+      headerShown: false,
+    })}>
+    <Tab.Screen name="Service" component={ServiceCenterList} />
+    <Tab.Screen name="Quick Ride" component={AllRides} />
+    <Tab.Screen name="Wallet" component={WalletScreen} />
+    <Tab.Screen name="Profile" component={ProfileScreen} />
+  </Tab.Navigator>
+);
+
+// Main Stack Navigation
+const MainStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="MainTabs" component={MainTabs} />
+    <Stack.Screen name="RidePickup" component={QuickRide} />
+    <Stack.Screen name="history" component={RidesHistory} />
+    <Stack.Screen name="otpEnters" component={OtpEnters} />
+  </Stack.Navigator>
+);
+
+// Authentication Stack
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Signup" component={SignupScreen} />
+    <Stack.Screen name="RideServiceSignup" component={RiderServiceSignup} />
+    <Stack.Screen name="ServiceCenterSignup" component={ServiceCenterSignup} />
+  </Stack.Navigator>
+);
+
+const App = () => {
+  const {user} = useUser();
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
+    <GestureHandlerRootView style={{flex: 1}}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <NavigationContainer>
+        <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
+          {user ? <MainStack /> : <AuthStack />}
+        </SafeAreaView>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+export default () => (
+  <UserProvider>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </UserProvider>
+);

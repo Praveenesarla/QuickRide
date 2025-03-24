@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "961211370646",
+    "project_id": "quick-service-d410a",
+    "storage_bucket": "quick-service-d410a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961211370646:android:14f585f8e1d64394a306b7",
+        "android_client_info": {
+          "package_name": "app.quickservice.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUgSBWGmvEFmFnjXoygVTq6-ikaHOt7tI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961211370646:android:11ef61c7e63acb2ca306b7",
+        "android_client_info": {
+          "package_name": "app.quickservicepartner.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUgSBWGmvEFmFnjXoygVTq6-ikaHOt7tI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

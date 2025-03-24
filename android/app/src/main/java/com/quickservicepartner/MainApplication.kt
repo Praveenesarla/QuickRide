@@ -1,4 +1,4 @@
-package com.qsriderapp
+package app.quickservicepartner.com
 
 import android.app.Application
 import com.facebook.react.PackageList
