@@ -99,7 +99,7 @@ const ServiceCenterList = () => {
 
     try {
       const response = await axios.get(osmUrl);
-      console.log('🌍 OpenStreetMap Response:', response.data);
+      console.log('OpenStreetMap Response:', response.data);
 
       const postalCode = response.data.address?.postcode;
       if (postalCode) {
@@ -108,7 +108,7 @@ const ServiceCenterList = () => {
         setError('Pincode not found from any source');
       }
     } catch (err) {
-      console.error('❌ OpenStreetMap API Error:', err);
+      console.error('OpenStreetMap API Error:', err);
       setError('Failed to fetch pincode from any source');
     }
   };
@@ -120,7 +120,7 @@ const ServiceCenterList = () => {
 
   return (
     <View style={{flex: 1}}>
-      <Header />
+      <Header title="Services List" />
       <Text style={styles.pincodeText}>
         Pincode: {pincode || 'Fetching...'}
       </Text>
@@ -128,7 +128,7 @@ const ServiceCenterList = () => {
 
       <FlatList
         contentContainerStyle={{padding: 10, gap: 10}}
-        data={serviceList} // ✅ Use fetched service list
+        data={serviceList}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => <ServiceCard service={item} />}
         ListEmptyComponent={

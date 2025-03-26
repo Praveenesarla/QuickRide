@@ -130,7 +130,6 @@ const SignupScreen = () => {
     console.log('Profile Creation Started');
 
     try {
-      // Required fields validation
       if (
         !phoneNumber ||
         !name ||
@@ -144,7 +143,6 @@ const SignupScreen = () => {
         return;
       }
 
-      // Check if required images are properly formatted
       if (!gstnCertificate.file || !panImage.file) {
         console.error(
           'One or more required images are missing a valid Base64 string',
@@ -152,13 +150,11 @@ const SignupScreen = () => {
         return;
       }
 
-      // Convert images to JSON strings
       const imagesData = {
         gstnCertificate: JSON.stringify(gstnCertificate),
         panImage: JSON.stringify(panImage),
       };
 
-      // Prepare request payload
       const requestData = {
         phoneNumber, // Required
         name, // Required
@@ -169,7 +165,7 @@ const SignupScreen = () => {
         mapLink, // Optional
         referralCode, // Optional
         email, // Optional
-        ...imagesData, // Required image fields
+        ...imagesData,
       };
 
       console.log('Final Request Data:', requestData);
@@ -179,11 +175,9 @@ const SignupScreen = () => {
 
       console.log('API Response:', response);
 
-      if (response?.token) {
-        await signInWithToken(response?.token);
-      } else {
-        console.error('API Response Missing Token:', response);
-      }
+      await signInWithToken(response?.data?.token);
+
+      console.error('API Response Missing Token:', response);
     } catch (error) {
       console.error('API Call Failed:', error.response?.data || error.message);
     }

@@ -92,6 +92,10 @@ const WalletScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [orderData, setOrderData] = useState({});
   const [updateOrderStatus, setOrderUpdateStatus] = useState('');
+  const [recentTransactions, setRecentTransactions] = useState([]);
+
+  console.log('recent transactions', recentTransactions);
+
   const updateStatus = (status, isSuccess = false) => {
     setPaymentStatus(status);
     console.log(
@@ -246,6 +250,7 @@ const WalletScreen = () => {
             'rider',
           );
           setUserData(userDataDetails.data);
+          setRecentTransactions(userDataDetails.data.recentTransactions);
           setWalletData(userDataDetails.data.wallet);
           console.log('userDataDetails', userDataDetails.data.wallet);
         }
@@ -257,22 +262,22 @@ const WalletScreen = () => {
     getData();
   }, [updateOrderStatus]);
 
-  const renderTransaction = ({item}) => (
+  const RenderTransaction = ({item}) => (
     <View style={styles.transactionRow}>
       <Image source={require('../assets/wallet.png')} style={styles.avatar} />
       <View style={styles.transactionDetails}>
-        <Text style={styles.transactionTitle}>{item.title}</Text>
+        <Text style={styles.transactionTitle}>{item.purpose}</Text>
         <Text style={styles.transactionId}>Transaction ID</Text>
-        <Text style={styles.transactionIdText}>{item.transactionId}</Text>
+        <Text style={styles.transactionIdText}>{item.id}</Text>
       </View>
       <View style={styles.transactionDetailsRight}>
-        <Text style={styles.transactionAmount}>{item.amount}</Text>
+        <Text style={styles.transactionAmount}>₹{item.amount}</Text>
         {item.cashback ? (
           <Text style={styles.rewardTag}>Cashback: {item.cashback}</Text>
         ) : (
           <Text style={styles.rewardTag}>Reward: {item.reward}</Text>
         )}
-        <Text style={styles.transactionDate}>{item.date}</Text>
+        <Text style={styles.transactionDate}>123</Text>
       </View>
     </View>
   );
@@ -316,9 +321,9 @@ const WalletScreen = () => {
       <View style={styles.transactionContainer}>
         <Text style={styles.sectionTitle}>Recent Transactions</Text>
         <FlatList
-          data={transactions}
+          data={recentTransactions}
           keyExtractor={item => item.id}
-          renderItem={renderTransaction}
+          renderItem={({item}) => <RenderTransaction item={item} />}
           showsVerticalScrollIndicator={false}
         />
       </View>
@@ -433,7 +438,7 @@ const styles = StyleSheet.create({
   transactionDetails: {flex: 1},
   transactionDetailsRight: {flex: 1, alignItems: 'flex-end'},
   transactionTitle: {
-    fontSize: responsive.fontSize(17),
+    fontSize: responsive.fontSize(14),
     fontFamily: 'Outfit-Medium',
     color: '#26273A',
   },
@@ -443,7 +448,7 @@ const styles = StyleSheet.create({
     color: '#26273A99',
   },
   transactionIdText: {
-    fontSize: responsive.fontSize(12),
+    fontSize: responsive.fontSize(10),
     color: '#26273A',
     fontFamily: 'Outfit-Medium',
   },

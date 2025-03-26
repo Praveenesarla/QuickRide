@@ -21,22 +21,30 @@ import DestinationReachedCard from '../components/mapscreen/DestinationReachedCa
 import PaymentCard from '../components/mapscreen/PaymentCard';
 import RiderStartedCard from '../components/mapscreen/RiderStartedCard';
 import OtpEnters from './OtpEnters';
-import {acceptRide, getUserDetails} from '../api';
+import {
+  acceptRide,
+  cancelRide,
+  finishRide,
+  getUserDetails,
+  startRide,
+} from '../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const QuickRide = ({route, navigation}) => {
   const {ride} = route.params;
   const [modalVisible, setModalVisible] = useState(true);
+  const [riderId, setRiderId] = useState('');
   const [region, setRegion] = useState(null);
+  const [rideData, setRideData] = useState({});
   const [bottomSheetFlow, setBottomSheetFlow] = useState('CustomerDetails');
   const [otpModal, setModal] = useState(true);
   const [userDataDetails, setUserDataDetails] = useState();
   const [uid, setUid] = useState();
   const [rideStatus, setRideStatus] = useState(null);
-  console.log('ride data', ride.id);
+  console.log('rideDataDetails', ride);
 
   useEffect(() => {
-    if (!ride.id) return;
+    if (!ride?.id) return;
 
     const rideDocRef = firestore()
       .collection('all_rides')
@@ -46,9 +54,13 @@ const QuickRide = ({route, navigation}) => {
 
     const unsubscribe = rideDocRef.onSnapshot(docSnapshot => {
       if (docSnapshot.exists) {
-        const rideData = docSnapshot.data();
-        setRideStatus(rideData.status);
-        console.log(`Ride ID: ${ride.id}, Status: ${rideData.status}`);
+        const data = docSnapshot.data();
+
+        setRideData(data); // Store the entire ride object
+        setRideStatus(data.status); // Store only the status
+
+        console.log(`Ride Data for ID ${ride.id}:`, data);
+        console.log(`Ride Status for ID ${ride.id}:`, data.status);
       } else {
         console.log(`Ride with ID ${ride.id} not found.`);
       }
@@ -56,7 +68,6 @@ const QuickRide = ({route, navigation}) => {
 
     return () => unsubscribe();
   }, [ride]);
-
   useEffect(() => {
     requestLocationPermission();
   }, []);
@@ -102,7 +113,8 @@ const QuickRide = ({route, navigation}) => {
     try {
       const response = await acceptRide(data);
       console.log('accepting suceess', response);
-      navigation.navigate('otpEnters', ride.otp);
+      console.log('ride otp', rideData.otp);
+      navigation.navigate('otpEnters', {otp: rideData.otp, ride: ride});
     } catch (error) {
       console.log(error);
     }
@@ -139,6 +151,48 @@ const QuickRide = ({route, navigation}) => {
 
   const handleBackPress = () => {
     // Add navigation logic if needed
+  };
+
+  const handleStartRide = async () => {
+    const rideId = ride.id;
+    const data = rideId;
+    try {
+      const response = await startRide(data);
+      console.log('handleStartRide', response);
+    } catch (error) {
+      console.log('handleStartRideError', error);
+    }
+  };
+
+  const handlePreFinishRide = async () => {
+    console.log('riderDatatobe Mo', rideData.rate, rideData.payment_status);
+    setRideStatus('PreFinish');
+  };
+
+  const handleFinishRide = async () => {
+    const rideId = ride.id;
+    const data = rideId;
+    try {
+      const response = await finishRide(data);
+      navigation.navigate('history');
+      console.log('handle Finish Ride', response);
+    } catch (error) {
+      console.log('handleStartRideError', error);
+    }
+  };
+
+  const handleCancelRide = async () => {
+    const data = {
+      uid: userDataDetails.uid,
+      rider_id: rideData.rider_id,
+      ride_id: ride.id,
+    };
+    try {
+      const response = await cancelRide(data);
+      console.log('handleStartRide', response);
+    } catch (error) {
+      console.log('handleStartRideError', error);
+    }
   };
 
   return (
@@ -183,10 +237,39 @@ const QuickRide = ({route, navigation}) => {
             <BottomSheetPointer />
           </View>
           {{
-            New: <CustomerDetails onAcceptRide={acceptingRide} />,
-            Finished: <DestinationReachedCard />,
-            Started: <PaymentCard />,
-            Accepted: <RiderStartedCard />,
+            New: (
+              <CustomerDetails
+                onAcceptRide={acceptingRide}
+                customerName={ride.name}
+                distance="23"
+                fromAddress={ride.drop.place}
+                price={ride.rate}
+                toAddress={ride.pick.place}
+              />
+            ),
+            PreFinish: (
+              <DestinationReachedCard
+                paymentStatus={rideData.payment_status}
+                price={rideData.rate}
+                onFinishRide={handleFinishRide}
+              />
+            ),
+            Started: (
+              <PaymentCard
+                onPressFinishRide={handlePreFinishRide}
+                name={ride.name}
+                price={ride.rate}
+              />
+            ),
+            Accepted: (
+              <RiderStartedCard
+                locationName={ride.pick.place}
+                price={ride.rate}
+                distanceRemaining="5 km"
+                onStartRide={handleStartRide}
+                onCancelRide={handleCancelRide}
+              />
+            ),
           }[rideStatus] || null}
         </View>
       </Modal>

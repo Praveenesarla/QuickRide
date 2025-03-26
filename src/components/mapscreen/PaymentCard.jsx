@@ -7,20 +7,8 @@ const PaymentCard = ({
   name = 'Gun Park',
   km = '4.6 km',
   price = '₹74',
-  onPressCash = () => {},
-  onPressQR = () => {},
+  onPressFinishRide = () => {},
 }) => {
-  const [selectedPayment, setSelectedPayment] = useState(null);
-
-  const handleSelect = type => {
-    setSelectedPayment(type);
-    if (type === 'Cash') {
-      onPressCash();
-    } else {
-      onPressQR();
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -33,39 +21,13 @@ const PaymentCard = ({
       <View style={styles.content}>
         <View style={styles.rowBetween}>
           <Text style={styles.nameText}>{name}</Text>
-          <Text style={styles.priceText}>{price}</Text>
+          <Text style={styles.priceText}>₹{price}</Text>
         </View>
         <View style={styles.rowBetween}>
           <TouchableOpacity
-            style={[
-              styles.button,
-              selectedPayment === 'Cash' && styles.selectedButton,
-            ]}
-            onPress={() => handleSelect('Cash')}>
-            <Text
-              style={[
-                styles.buttonText,
-                {
-                  color:
-                    selectedPayment === 'Cash' ? colors.white : colors.black,
-                },
-              ]}>
-              Cash
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              selectedPayment === 'QR' && styles.selectedButton,
-            ]}
-            onPress={() => handleSelect('QR')}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: selectedPayment === 'QR' ? colors.white : colors.black},
-              ]}>
-              QR
-            </Text>
+            style={styles.finishButton}
+            onPress={onPressFinishRide}>
+            <Text style={styles.buttonText}>Finish Ride</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -112,6 +74,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: responsive.padding(16),
+
+    marginTop: responsive.margin(20),
   },
   nameText: {
     fontFamily: fonts.SemiBold,
@@ -123,22 +87,18 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Bold,
     fontSize: responsive.fontSize(16),
   },
-  button: {
-    width: '47%',
+  finishButton: {
+    width: '100%',
     borderRadius: responsive.borderRadius(4),
-    borderWidth: responsive.width(1),
-    borderColor: colors.red,
     height: responsive.height(34),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: '#B82929',
   },
   buttonText: {
     fontSize: responsive.fontSize(14),
     fontFamily: fonts.Bold,
-  },
-  selectedButton: {
-    backgroundColor: colors.red,
+    color: colors.white,
   },
 });
 

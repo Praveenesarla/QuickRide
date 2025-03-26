@@ -49,14 +49,16 @@ const RideCard = ({
           <Text style={styles.priceValue}>₹{priceValue}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.showRideContainer} onPress={onPress}>
-        <Text style={styles.showRideText}>Show Ride</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.showRideContainer}
-        onPress={openGoogleMaps}>
-        <Text style={styles.showRideText}>Show Route</Text>
-      </TouchableOpacity>
+      <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+        <TouchableOpacity style={styles.showRideContainer} onPress={onPress}>
+          <Text style={styles.showRideText}>Show Ride</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.showRideContainer}
+          onPress={openGoogleMaps}>
+          <Text style={styles.showRideText}>Show Route</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -78,9 +80,10 @@ const styles = StyleSheet.create({
     fontSize: responsive.fontSize(12),
   },
   fromText: {
-    fontSize: responsive.fontSize(16),
+    fontSize: responsive.fontSize(11),
     color: colors.black,
     fontFamily: fonts.Regular,
+    width: '97%',
   },
   locationContainer: {
     flexDirection: 'row',
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Black,
   },
   showRideContainer: {
-    width: '100%',
+    width: '45%',
     height: responsive.height(25),
     borderWidth: responsive.width(1),
     borderColor: colors.red,

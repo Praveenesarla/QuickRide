@@ -141,3 +141,37 @@ export const acceptRide = async data => {
     console.log('error while accept', error.message);
   }
 };
+
+export const startRide = async rideId => {
+  console.log('passed Data', rideId);
+  try {
+    const response = await APIClient.get('/startRide', {
+      params: {rideId},
+    });
+    return response.data;
+  } catch (error) {
+    console.log('while start ride Error', error);
+  }
+};
+
+export const cancelRide = async data => {
+  console.log('passed Data for cancelRide', data);
+  try {
+    const response = await APIClient.post('/cancelRideByRider', data);
+    return response.data;
+  } catch (error) {
+    console.log('error while canceling error', error.message);
+  }
+};
+
+export const finishRide = async rideId => {
+  console.log('passed Data', rideId);
+  try {
+    const response = await APIClient.get('/finishRide', {
+      params: {rideId},
+    });
+    return response.data;
+  } catch (error) {
+    console.log('while start ride Error', error);
+  }
+};

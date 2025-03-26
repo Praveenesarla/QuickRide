@@ -1,4 +1,11 @@
-import {Alert, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import responsive from '../utils/responsive';
@@ -6,11 +13,11 @@ import {colors, fonts} from '../constants/theme';
 import OTPInput from '../components/OtpInput';
 
 const OtpEnters = ({route, navigation}) => {
-  const {rideOtp} = route.params;
-
+  const {otp, ride} = route.params;
+  console.log('rideOtp', otp);
   const handleOTPComplete = otp => {
-    if (otp === rideOtp) {
-      navigation.navigate('RidePickup');
+    if (otp === otp) {
+      navigation.navigate('RidePickup', {ride});
     }
   };
 
@@ -57,7 +64,8 @@ const OtpEnters = ({route, navigation}) => {
           marginTop: 'auto',
           padding: responsive.padding(10),
         }}>
-        <View
+        <TouchableOpacity
+          onPress={handleOTPComplete}
           style={{
             width: '100%',
             height: responsive.height(34),
@@ -76,7 +84,7 @@ const OtpEnters = ({route, navigation}) => {
             }}>
             Verify OTP
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

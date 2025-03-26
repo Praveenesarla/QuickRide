@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Provider} from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 import WalletScreen from './src/screens/WalletScreen';
 
@@ -22,7 +23,7 @@ import RidesHistory from './src/screens/RidesHistory';
 import RiderServiceSignup from './src/screens/RiderServiceSignup';
 import ServiceCenterSignup from './src/screens/ServiceCenterSignup';
 import AllRides from './src/screens/AllRides';
-import {SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaView, StatusBar, ToastAndroid} from 'react-native';
 import SafeViewAndroid from './src/utils/SafeViewAndroid';
 import OtpEnters from './src/screens/OtpEnters';
 
@@ -36,6 +37,7 @@ const MainTabs = () => (
       tabBarIcon: ({color, size}) => {
         let iconName;
         if (route.name === 'Service') iconName = 'miscellaneous-services';
+        else if (route.name === 'history') iconName = 'list-alt';
         else if (route.name === 'Quick Ride') iconName = 'directions-car';
         else if (route.name === 'Wallet') iconName = 'account-balance-wallet';
         else if (route.name === 'Profile') iconName = 'person';
@@ -87,6 +89,7 @@ const App = () => {
           {user ? <MainStack /> : <AuthStack />}
         </SafeAreaView>
       </NavigationContainer>
+      <Toast />
     </GestureHandlerRootView>
   );
 };

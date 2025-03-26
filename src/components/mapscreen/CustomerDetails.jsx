@@ -23,12 +23,12 @@ const CustomerDetails = ({
             <FromToDestination2 />
             <View style={styles.locationDetails}>
               <Text style={styles.fromText}>{fromAddress}</Text>
-              <Text style={styles.distanceText}>{distance}</Text>
+              <Text style={styles.distanceText}>{distance}k.m.</Text>
               <Text style={styles.fromText}>{toAddress}</Text>
             </View>
           </View>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceValue}>{price}</Text>
+            <Text style={styles.priceValue}>₹{price}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.acceptButton} onPress={onAcceptRide}>
@@ -90,7 +90,7 @@ const styles = {
   priceValue: {
     fontSize: responsive.fontSize(16),
     fontFamily: fonts.Bold,
-    color: colors.primary,
+    color: colors.black,
   },
   acceptButton: {
     width: '100%',

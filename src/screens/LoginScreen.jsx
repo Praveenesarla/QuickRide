@@ -17,6 +17,7 @@ import {OtpInput} from 'react-native-otp-entry';
 import auth, {signInWithCustomToken} from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getCustomToken, sendRideOtp, verifyOtp} from '../api';
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -34,6 +35,13 @@ const LoginScreen = () => {
     try {
       const response = await sendRideOtp(phoneNumber);
       console.log('OTP Sent Successfully:', response);
+      Toast.show({
+        type: 'error',
+        text1: 'OTP Sent Successfully',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
       setOtpFlow('Verify Otp');
       setOtpData(response);
     } catch (error) {
@@ -41,6 +49,13 @@ const LoginScreen = () => {
         'Failed to send OTP:',
         error?.response?.data || error.message,
       );
+      Toast.show({
+        type: 'error',
+        text1: error?.response?.data?.error,
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
     }
   };
 
@@ -48,6 +63,13 @@ const LoginScreen = () => {
     try {
       console.log('otpp', otpData?.data?.orderId);
       if (!otpData?.data?.orderId || !phoneNumber || !otp) {
+        Toast.show({
+          type: 'error',
+          text1: 'Please Enter OTP',
+          position: 'top',
+          visibilityTime: 4000,
+          autoHide: true,
+        });
         console.error('Missing required data:', {
           phoneNumber,
           otp,
@@ -62,9 +84,23 @@ const LoginScreen = () => {
         otp,
       );
       console.log('OTP verified successfully:', response);
-
+      Toast.show({
+        type: 'error',
+        text1: 'OTP verified successfully',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
       setOtpFlow('Login');
+      gettingCustomToken();
     } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Otp verification failed',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
       console.log('Verify OTP error:', error?.response?.data || error);
     }
   };
@@ -141,6 +177,14 @@ const LoginScreen = () => {
               onTextChange={text => setOtp(text)}
               theme={{pinCodeContainerStyle: styles.pinCodeContainerStyle}}
             />
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginLeft: 'auto',
+              }}>
+              <Text style={styles.signupText}>Resend Otp</Text>
+            </TouchableOpacity>
           </>
         )}
 
@@ -270,5 +314,6 @@ const styles = StyleSheet.create({
     color: '#B82929',
     fontFamily: 'Outfit-Bold',
     fontSize: responsive.fontSize(12),
+    textAlign: 'right',
   },
 });

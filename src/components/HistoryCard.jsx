@@ -40,11 +40,11 @@ const HistoryCard = ({
           }}>
           <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
             <FromToDestination height={37} />
-            <View style={{gap: 5}}>
+            <View style={{gap: 10}}>
               <Text
                 style={{
                   fontFamily: fonts.Medium,
-                  fontSize: responsive.fontSize(14),
+                  fontSize: responsive.fontSize(8),
                   color: colors.black,
                 }}>
                 {fromLocation}
@@ -52,7 +52,7 @@ const HistoryCard = ({
               <Text
                 style={{
                   fontFamily: fonts.Medium,
-                  fontSize: responsive.fontSize(14),
+                  fontSize: responsive.fontSize(8),
                   color: colors.black,
                 }}>
                 {toLocation}

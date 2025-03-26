@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import responsive from '../../utils/responsive';
 import {colors, fonts} from '../../constants/theme';
 
@@ -9,6 +9,7 @@ const RiderStartedCard = ({
   price = '₹0',
   distanceRemaining = '0 km',
   onStartRide = () => {},
+  onCancelRide = () => {},
 }) => {
   return (
     <View>
@@ -21,11 +22,16 @@ const RiderStartedCard = ({
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.infoRow}>
-          <Text style={styles.locationName}>{locationName}</Text>
-          <Text style={styles.price}>{price}</Text>
+          <Text style={[styles.locationName]}>{locationName}</Text>
+          <Text style={styles.price}>₹{price}</Text>
         </View>
         <TouchableOpacity style={styles.startButton} onPress={onStartRide}>
           <Text style={styles.startButtonText}>Start Ride</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.startButton, styles.cancelButton]}
+          onPress={onCancelRide}>
+          <Text style={styles.startButtonText}>Cancel Ride</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -71,7 +77,8 @@ const styles = {
   locationName: {
     fontFamily: fonts.SemiBold,
     color: colors.black,
-    fontSize: responsive.fontSize(16),
+    fontSize: responsive.fontSize(14),
+    width: '75%',
   },
   price: {
     color: colors.black,
@@ -83,13 +90,16 @@ const styles = {
     height: responsive.height(34),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.red,
+    backgroundColor: colors.green,
     marginVertical: responsive.margin(10),
+  },
+  cancelButton: {
+    backgroundColor: colors.red,
   },
   startButtonText: {
     fontSize: responsive.fontSize(14),
     fontFamily: fonts.Bold,
-    color: colors.cement,
+    color: colors.white,
   },
 };
 

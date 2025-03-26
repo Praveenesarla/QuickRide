@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
 import Icon3 from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import responsive from '../utils/responsive';
@@ -10,21 +17,30 @@ const ServiceCard = ({
   phoneNumber = '2222222222',
   address = '152 Nikko Ridges, Chaseborough 04399',
   kmFar = '5.3',
+  service,
 }) => {
+  const callNumber = phone => {
+    let phoneNumber = `tel:${phone}`;
+    Linking.openURL(phoneNumber).catch(err =>
+      console.error('Error opening dialer:', err),
+    );
+  };
+
+  console.log('service', service);
   return (
     <View style={styles.cardContainer}>
       <View style={styles.detailsContainer}>
-        <Text style={styles.serviceName}>{serviceName}</Text>
+        <Text style={styles.serviceName}>{service.name}</Text>
         <View style={styles.rowSpaceBetween}>
           <View style={styles.leftContainer}>
             <View style={styles.rowAlignCenter}>
-              <Text style={styles.phoneNumber}>{phoneNumber}</Text>
+              <Text style={styles.phoneNumber}>{service.phone}</Text>
               <Image
                 source={require('../assets/call.png')}
                 style={styles.callIcon}
               />
             </View>
-            <Text style={styles.address}>{address}</Text>
+            <Text style={styles.address}>{service.address}</Text>
           </View>
           <View style={styles.distanceContainer}>
             <Text style={styles.kmText}>{kmFar}</Text>
@@ -37,10 +53,13 @@ const ServiceCard = ({
           <Text style={styles.actionText}>Location</Text>
           <Icon3 name="location-dot" size={12} color="#900" />
         </View>
-        <View style={styles.actionButton}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => callNumber(service.phone)}>
           <Text style={styles.actionText}>Call</Text>
+
           <Icon2 name="phone" size={12} color={colors.red} />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

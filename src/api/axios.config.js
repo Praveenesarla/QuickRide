@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL =
-  'https://bd97-2401-4900-1cab-5750-75f6-b5b7-8f-13a0.ngrok-free.app';
+  'https://quick-service-server-1036279390366.asia-south1.run.app';
 
 console.log('prod url', BASE_URL);
 
