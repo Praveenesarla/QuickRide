@@ -9,7 +9,7 @@ const AllRides = ({navigation}) => {
   const [rides, setRides] = useState([]);
   const [userDataDetails, setUserDataDetails] = useState();
 
-  console.log('userDataTypes', userDataDetails);
+  console.log('userDataTypes-----------', userDataDetails);
 
   useEffect(() => {
     const ridesCollectionRef = firestore()
