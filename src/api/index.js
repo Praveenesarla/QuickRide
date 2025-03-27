@@ -175,3 +175,13 @@ export const finishRide = async rideId => {
     console.log('while start ride Error', error);
   }
 };
+
+export const changeRiderLocation = async data => {
+  console.log('passed Data for cancelRide', data);
+  try {
+    const response = await APIClient.post('/changeRiderLocation', data);
+    return response.data;
+  } catch (error) {
+    console.log('error while canceling error', error.message);
+  }
+};
