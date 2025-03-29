@@ -180,8 +180,46 @@ export const changeRiderLocation = async data => {
   console.log('passed Data for cancelRide', data);
   try {
     const response = await APIClient.post('/changeRiderLocation', data);
+    console.log('rider location updated', response.data);
     return response.data;
   } catch (error) {
     console.log('error while canceling error', error.message);
+  }
+};
+
+export const raiseBill = async data => {
+  console.log('Psseed data for raised bill', data);
+  try {
+    const response = await APIClient.post('/addBill', data);
+    console.log('bill raised sucess', response.data);
+    return response.data;
+  } catch (error) {
+    console.log('error while raising the bill', error.message);
+  }
+};
+
+export const getUserBill = async phone => {
+  console.log('passed Data', phone);
+  try {
+    const response = await APIClient.get('/checkUserForBill', {
+      params: {phone},
+    });
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const raiseWithdrawel = async uid => {
+  console.log('Passed Data:', uid);
+
+  try {
+    const response = await APIClient.get('/raiseWithdrawal', {
+      params: {uid},
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error while raising withdrawal:', error);
+    return error;
   }
 };

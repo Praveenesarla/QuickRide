@@ -26,6 +26,8 @@ import AllRides from './src/screens/AllRides';
 import {SafeAreaView, StatusBar, ToastAndroid} from 'react-native';
 import SafeViewAndroid from './src/utils/SafeViewAndroid';
 import OtpEnters from './src/screens/OtpEnters';
+import ServiceProviderService from './src/screens/ServiceProviderService';
+import ServicePartnerWallet from './src/screens/ServicePartnerWallet';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -47,9 +49,9 @@ const MainTabs = () => (
       tabBarInactiveTintColor: 'gray',
       headerShown: false,
     })}>
-    <Tab.Screen name="Service" component={ServiceCenterList} />
+    <Tab.Screen name="Service" component={ServiceProviderService} />
     <Tab.Screen name="Quick Ride" component={AllRides} />
-    <Tab.Screen name="Wallet" component={WalletScreen} />
+    <Tab.Screen name="Wallet" component={ServicePartnerWallet} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
 );

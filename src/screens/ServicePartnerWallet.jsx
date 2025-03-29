@@ -12,6 +12,7 @@ import {
   Modal,
   Button,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from '../components/Header';
 import {CFPaymentGatewayService} from 'react-native-cashfree-pg-sdk';
@@ -28,7 +29,13 @@ import WalletOfferCard from '../components/WalletOfferCard';
 import Header2 from '../components/Header2';
 import {colors, fonts} from '../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {createOrder, getUserDetails, riderPaymentSuccess} from '../api';
+import {
+  createOrder,
+  getUserDetails,
+  raiseWithdrawel,
+  riderPaymentSuccess,
+} from '../api';
+import Toast from 'react-native-toast-message';
 
 const {height} = Dimensions.get('window');
 
@@ -83,9 +90,8 @@ const transactions = [
   },
 ];
 
-const WalletScreen = () => {
+const ServicePartnerWallet = () => {
   const [uid, setUid] = useState('');
-  const [userDataDetails, setUserDataDetails] = useState();
   const [userData, setUserData] = useState('');
   const [walletData, setWalletData] = useState({});
   const [paymentStatus, setPaymentStatus] = useState(null);
@@ -95,7 +101,53 @@ const WalletScreen = () => {
   const [updateOrderStatus, setOrderUpdateStatus] = useState('');
   const [recentTransactions, setRecentTransactions] = useState([]);
 
-  console.log('recent transactions', recentTransactions);
+  useEffect(() => {
+    if (!userData?.uid) return;
+
+    const transactionsRef = firestore()
+      .collection('partners')
+      .doc(userData.uid)
+      .collection('transactions')
+      .orderBy('date', 'desc');
+
+    const unsubscribe = transactionsRef.onSnapshot(snapshot => {
+      if (!snapshot.empty) {
+        const transactionsList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('Recent Transactions', transactionsList);
+        setRecentTransactions(transactionsList);
+      } else {
+        setRecentTransactions([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userData?.uid]);
+
+  useEffect(() => {
+    if (!userData?.uid) return;
+
+    const walletRef = firestore()
+      .collection('partners')
+      .doc(userData.uid)
+      .collection('wallet')
+      .doc('wallet');
+
+    const unsubscribe = walletRef.onSnapshot(snapshot => {
+      if (snapshot.exists) {
+        setWalletData({
+          wallet: snapshot.data().amount,
+          reward: snapshot.data().reward,
+        });
+      } else {
+        setWalletData(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userData?.uid]);
 
   const updateStatus = (status, isSuccess = false) => {
     setPaymentStatus(status);
@@ -238,29 +290,54 @@ const WalletScreen = () => {
     }
   };
 
+  const withDrawal = async () => {
+    try {
+      const response = await raiseWithdrawel(userData.uid);
+      console.log('Withdrawal request successful:', response);
+      Toast.show({
+        type: 'success',
+        text1: 'Withdrawal Request Success',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Withdrawal Request Failed',
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+      console.error('Error while withdrawing:', error);
+    }
+  };
+
   useEffect(() => {
-    userDetails();
-  }, []);
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('auth');
+        if (value !== null) {
+          const parsedValue = JSON.parse(value);
+          console.log('uid', parsedValue);
+          setUid(parsedValue.uid);
+          const userDataDetails = await getUserDetails(
+            parsedValue.uid,
+            'partner',
+          );
+          setUserData(userDataDetails.data);
+          console.log('user data', userDataDetails.data);
+          //   setRecentTransactions(userDataDetails.data.recentTransactions);
+          setWalletData(userDataDetails.data.wallet);
+          console.log('userDataDetails', userDataDetails.data.wallet);
+        }
+      } catch (error) {
+        console.error('Error retrieving data:', error);
+      }
+    };
 
-  const userDetails = async () => {
-    try {
-      const auth = await getData();
-      const response = await getUserDetails(auth.uid, 'partner');
-      console.log('response user details', response.data);
-      setUserDataDetails(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('auth');
-      return JSON.parse(value);
-    } catch (error) {
-      console.error('Error retrieving data:', error);
-    }
-  };
+    getData();
+  }, [updateOrderStatus]);
 
   const RenderTransaction = ({item}) => (
     <View style={styles.transactionRow}>
@@ -296,7 +373,7 @@ const WalletScreen = () => {
           )}
         </View>
         <TouchableOpacity
-          onPress={() => setModalVisible(true)}
+          onPress={withDrawal}
           style={{
             width: responsive.width(117),
             height: responsive.height(32),
@@ -312,7 +389,7 @@ const WalletScreen = () => {
               fontFamily: fonts.Medium,
               fontSize: responsive.fontSize(12),
             }}>
-            +Add money
+            WithDraw
           </Text>
         </TouchableOpacity>
       </View>
@@ -495,4 +572,4 @@ const styles = StyleSheet.create({
   saveButton: {backgroundColor: 'blue'},
 });
 
-export default WalletScreen;
+export default ServicePartnerWallet;
